@@ -22,6 +22,10 @@ public class TransferTask implements Runnable {
         // 4. Always unlock in finally block
         // 5. Print thread name + success message
 
+        // init accounts
+        BigDecimal fromPrev = from.getBalance();
+        BigDecimal toPrev = to.getBalance();
+
         // locking both accounts
         Account first = from.getId() < to.getId() ? from : to;
         Account second = from.getId() < to.getId() ? to : from;
@@ -31,19 +35,24 @@ public class TransferTask implements Runnable {
 
         // Check if from.getBalance() >= amount
         try {
-            if (from.getBalance().compareTo(amount) >= 0) {
-                from.withdraw(amount);// withdraw
-                to.deposit(amount);// deposit
-                System.out.printf("%s: %s → %s  Amount=%s%n",
-                        Thread.currentThread().getName(), from.getId(), to.getId(), amount);
+            try {
+                if (from.getBalance().compareTo(amount) >= 0) {
+                    from.withdraw(amount);// withdraw
+                    to.deposit(amount);// deposit
+                    System.out.printf("%s: %s → %s  Amount=%s%n",
+                            Thread.currentThread().getName(), from.getId(), to.getId(), amount);
+                }
+            } finally {
+                //unlock in finally block
+                first.getLock().unlock();
+                second.getLock().unlock();
             }
-        }finally {
-            //unlock in finally block
-            first.getLock().unlock();
-            second.getLock().unlock();
+        }catch (Exception ex){
+            from.setBalance(fromPrev);
+            to.setBalance(toPrev);
+            // 💣 Optional: introduce a 5% random failure to simulate rollback testing
+            if (ThreadLocalRandom.current().nextInt(100) < 5) throw new RuntimeException("Simulated failure");
+            System.err.println("Nasubiye inyuma (ROLLBACK → " + ex.getMessage());
         }
-
-        // 💣 Optional: introduce a 5% random failure to simulate rollback testing
-        if (ThreadLocalRandom.current().nextInt(100) < 5) throw new RuntimeException("Simulated failure");
     }
 }

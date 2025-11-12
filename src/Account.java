@@ -22,6 +22,9 @@ public class Account {
     public ReentrantLock getLock() {
         return lock;
     }
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 
     public void deposit(BigDecimal amount) {
         balance = balance.add(amount);
