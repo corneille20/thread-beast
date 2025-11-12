@@ -52,7 +52,7 @@ public class TransferTask implements Runnable {
             to.setBalance(toPrev);
             // 💣 Optional: introduce a 5% random failure to simulate rollback testing
             if (ThreadLocalRandom.current().nextInt(100) < 5) throw new RuntimeException("Simulated failure");
-            System.err.println("ROLLBACK → " + ex.getMessage());
+            System.err.println("Nasubiye inyuma (ROLLBACK → " + ex.getMessage());
         }
     }
 }
