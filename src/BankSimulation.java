@@ -15,7 +15,7 @@ public class BankSimulation {
         }
 
         // 2. Create thread pool
-        ExecutorService pool = Executors.newFixedThreadPool(10);
+        ExecutorService pool = Executors.newFixedThreadPool(2);
 
         // 3. Submit transfer tasks
         int operations = 1000;
