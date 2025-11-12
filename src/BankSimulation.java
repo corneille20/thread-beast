@@ -18,7 +18,7 @@ public class BankSimulation {
         ExecutorService pool = Executors.newFixedThreadPool(2);
 
         // 3. Submit transfer tasks
-        int operations = 1000;
+        int operations = 100000;
         for (int i = 0; i < operations; i++) {
             Account from = accounts.get(ThreadLocalRandom.current().nextInt(accountCount));
             Account to = accounts.get(ThreadLocalRandom.current().nextInt(accountCount));
