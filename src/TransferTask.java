@@ -22,6 +22,7 @@ public class TransferTask implements Runnable {
         // 4. Always unlock in finally block
         // 5. Print thread name + success message
 
+        long start = System.nanoTime();// igihe itangiriye
         // init accounts
         BigDecimal fromPrev = from.getBalance();
         BigDecimal toPrev = to.getBalance();
@@ -47,12 +48,16 @@ public class TransferTask implements Runnable {
                 first.getLock().unlock();
                 second.getLock().unlock();
             }
+            long duration = System.nanoTime() - start;
+            System.out.printf("Execution time: %.2f s%n", duration / 1e9);
         }catch (Exception ex){
             from.setBalance(fromPrev);
             to.setBalance(toPrev);
             // 💣 Optional: introduce a 5% random failure to simulate rollback testing
             if (ThreadLocalRandom.current().nextInt(100) < 5) throw new RuntimeException("Simulated failure");
-            System.err.println("Nasubiye inyuma (ROLLBACK → " + ex.getMessage());
+            System.err.printf("[%s] ROLLBACK on transfer %d→%d (%.2f RWF): %s%n",
+                    Thread.currentThread().getName(), from.getId(), to.getId(), amount, ex.getMessage());
+
         }
     }
 }
